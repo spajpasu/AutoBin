@@ -5,12 +5,14 @@ import os.path
 from importlib import reload
 
 import InputData
+import FbxFiles
 reload(InputData)
+reload(FbxFiles)
 from InputData import InputData
-
+from FbxFiles import FbxFiles
 
 class Directory:
-    __folder_name   = r'\fbx_files'
+    __folder_name   = ''
 
     def __init__(self, folderName = InputData().folderName):
         if len(folderName) > 0: Directory.__folder_name = r'\\' + folderName
@@ -28,3 +30,14 @@ class Directory:
     def get_folder_path(self):
         print('.fbx files saved in:\n %s'% os.getcwd() + Directory.__folder_name)
         return (os.getcwd() + Directory.__folder_name)
+
+    def createFile(self):
+        fileName = FbxFiles()._obj_Name+'.txt'
+        if os.path.exists(fileName):
+            print('File with name %s exists and overwriting.' %fileName)
+        else:
+            open(fileName,'w+')
+        return fileName
+
+
+

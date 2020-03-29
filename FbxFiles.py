@@ -11,7 +11,7 @@ import bpy
 
 class FbxFiles:
 
-    _obj_Name = 'Building'
+    _obj_Name = ''
 
     def __init__(self, objName = InputData().objName):
 
@@ -42,7 +42,6 @@ class FbxFiles:
 
     # create fbx file in the folder created with name of building and osm_id
     def fileCreation(self, object):
-        Directory().create_directory()
         folder = Directory().get_folder_path()
         FbxFiles().deselectAllObj()
         object.select_set(True)
@@ -50,6 +49,7 @@ class FbxFiles:
                                                                     # check these two
         bpy.ops.export_scene.fbx(filepath=path, use_selection=True, use_custom_props=True,
                                  axis_forward='-Z', axis_up='Y')
+        return path
 
     def deselectAllObj(self):
         bpy.ops.object.select_all(action='DESELECT')
@@ -60,13 +60,8 @@ class FbxFiles:
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
         FbxFiles().deselectAllObj()
 
-    # check if cell in DB is already full and ask for conformation if yes
-    def cellCheck(self):
-
-        pass
-
-    # should save the file location into postGIS database
-    def save_filename_postGIS(self, path):
-
-        pass
+    # get osm_id of object given in Input file
+    def get_osm_id(self, object):
+        osm_id = object.name.split('_')
+        return int(osm_id[1])
 
