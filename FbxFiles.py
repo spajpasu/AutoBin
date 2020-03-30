@@ -4,8 +4,8 @@ import InputData
 import Directory
 reload(InputData)
 reload(Directory)
-from InputData import InputData
-from Directory import Directory
+# from InputData import InputData
+# from Directory import Directory
 
 import bpy
 
@@ -13,7 +13,7 @@ class FbxFiles:
 
     _obj_Name = ''
 
-    def __init__(self, objName = InputData().objName):
+    def __init__(self, objName = InputData.InputData().objName):
 
         if len(objName) > 0: FbxFiles._obj_Name = objName
 
@@ -42,10 +42,9 @@ class FbxFiles:
 
     # create fbx file in the folder created with name of building and osm_id
     def fileCreation(self, object):
-        folder = Directory().get_folder_path()
         FbxFiles().deselectAllObj()
         object.select_set(True)
-        path = folder + r'\\' + object.name + '.fbx'
+        path = Directory.Directory().get_folder_path() + '\\' + object.name + '.fbx'
                                                                     # check these two
         bpy.ops.export_scene.fbx(filepath=path, use_selection=True, use_custom_props=True,
                                  axis_forward='-Z', axis_up='Y')

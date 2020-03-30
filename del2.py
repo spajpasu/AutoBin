@@ -37,6 +37,8 @@
 #
 # createFile()
 
-a = 2
+# a = 2
 b = 888888888888888
+a = '\\' + 'ajay'
+print(a)
 print('vale of a is {}, {}'.format(a, b))
