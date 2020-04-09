@@ -17,7 +17,6 @@ reload(Directory)
 
 a = FbxFiles.FbxFiles()
 b = Directory.Directory()
-a.changeSettings()
 b.create_directory()
 file = b.createFile()
 f = open(file, 'w')
@@ -25,9 +24,12 @@ f = open(file, 'w')
 for obj in bpy.data.objects:
     objectName = a.checkObjType(obj)
     if objectName != 0:
-        path = a.fileCreation(obj)
-        osm_id = a.get_osm_id(obj)
-        f.write(str(osm_id) + '\t' + path + '\n')
+        point = a.lowest_lat_long(obj)
+        if point != 1:
+            a.change_settings(point)
+            path = a.fileCreation(obj)
+            osm_id = a.get_osm_id(obj)
+            f.write(str(osm_id) + '\t' + path + '\n')
         # f.write(osm_id)
     else:
         continue

@@ -2,6 +2,7 @@ from importlib import reload
 
 import InputData
 import Directory
+import math
 reload(InputData)
 reload(Directory)
 # from InputData import InputData
@@ -17,9 +18,26 @@ class FbxFiles:
 
         if len(objName) > 0: FbxFiles._obj_Name = objName
 
-    def changeSettings(self):
-        bpy.ops.object.select_all(action='SELECT')
-        bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
+    def lowest_lat_long(self, object): # change this
+        # bpy.ops.object.select_all(action='SELECT')
+        # bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
+        if object.type == 'MESH':
+            n = len(object.data.vertices.data.vertices.values())
+            length = [0] * n
+            mat = object.matrix_world
+            for i in range(0, n):
+                length[i] = math.sqrt((object.data.vertices[i].co[0]) ** 2 + (object.data.vertices[i].co[1]) ** 2 + (object.data.vertices[i].co[2]) ** 2)
+            # print(length)
+            j = length.index(min(length))
+            return mat @ object.data.vertices[j].co
+        else:
+            print("Model is not of type 'MESH'")
+            return 1
+
+    def change_settings(self, point):
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.context.scene.cursor.location = point
+        bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
 
     # this should return true if building
     def checkObjType(self, object):
@@ -54,8 +72,8 @@ class FbxFiles:
         bpy.ops.object.select_all(action='DESELECT')
 
 
-    def revertSettings(self):
-        bpy.ops.object.select_all(action='SELECT')
+    def revertSettings(self): #Change this
+        bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
         FbxFiles().deselectAllObj()
 
