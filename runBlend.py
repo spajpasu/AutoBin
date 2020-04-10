@@ -19,6 +19,7 @@ a = FbxFiles.FbxFiles()
 b = Directory.Directory()
 b.create_directory()
 file = b.createFile()
+a.set_origin_to_world()
 f = open(file, 'w')
 
 for obj in bpy.data.objects:

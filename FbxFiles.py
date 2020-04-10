@@ -34,6 +34,14 @@ class FbxFiles:
             print("Model is not of type 'MESH'")
             return 1
 
+    def set_origin_to_world(self):
+        bpy.ops.object.select_all(action='SELECT')
+        bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
+        bpy.context.scene.cursor.rotation_euler = (0.0, 0.0, 0.0)
+        bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+        FbxFiles().deselectAllObj()
+
+
     def change_settings(self, point):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.context.scene.cursor.location = point
