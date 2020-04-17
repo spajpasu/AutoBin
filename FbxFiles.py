@@ -19,8 +19,6 @@ class FbxFiles:
         if len(objName) > 0: FbxFiles._obj_Name = objName
 
     def lowest_lat_long(self, object): # change this
-        # bpy.ops.object.select_all(action='SELECT')
-        # bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
         if object.type == 'MESH':
             n = len(object.data.vertices.data.vertices.values())
             length = [0] * n
@@ -53,18 +51,6 @@ class FbxFiles:
             return object.name
         else:
             return 0
-        # print(FbxFiles.__obj_Name)
-        # p rint('Object with name %s does not exist'%FbxFiles.__obj_Name)
-        # a = bpy.data.objects['Building_53815693'].name
-        # print(a)
-
-    # should save the values of original location
-    # def originalLocation(self, object):
-    #     return object.location
-
-    # should change the coordinates of object to origin
-    # def changeToOrigin(self):
-    #     pass
 
     # create fbx file in the folder created with name of building and osm_id
     def fileCreation(self, object):
@@ -74,6 +60,7 @@ class FbxFiles:
                                                                     # check these two
         bpy.ops.export_scene.fbx(filepath=path, use_selection=True, use_custom_props=True,
                                  axis_forward='-Z', axis_up='Y')
+        FbxFiles().revertSettings()
         return path
 
     def deselectAllObj(self):

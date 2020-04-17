@@ -4,5 +4,7 @@ reload(Database)
 
 b = Database.Database()
 [conn, cur] = b.connectDB()
-b.writePath(conn, cur)
+b.createIndex(cur)
+b.writePath(cur)
+b.dropIndex(cur)
 b.disconnectDB(conn, cur)

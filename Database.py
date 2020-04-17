@@ -18,7 +18,11 @@ class Database:
             print("Connection to database not successful. Error: ", error)
             print("EXCEPTION TYPE: ", type(error))
 
-    def writePath(self, conn, cur):
+    def createIndex(self, cursor):
+        cursor.execute(
+            "CREATE INDEX osm_id_index ON {} (osm_id);".format(InputData().tableName))
+
+    def writePath(self, cur):
         f = open(InputData().objName+'.txt', "r")
         i = ''
         for x in f:
@@ -52,6 +56,9 @@ class Database:
             return decision
         else:
             return decision
+
+    def dropIndex(self, cursor):
+        cursor.execute("DROP INDEX osm_id_index;")
 
     def disconnectDB(self, conn, cur):
         cur.close()

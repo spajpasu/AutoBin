@@ -7,7 +7,7 @@ os.chdir(r'D:\UniDuE\hiwi\AutoBin\Project_Files\01_Blender\buildingCoordinate')
 import sys
 dir = os.path.dirname(bpy.data.filepath)
 if not dir in sys.path:
-    sys.path.append(dir )
+    sys.path.append(dir)
 
 from importlib import reload
 import FbxFiles
@@ -34,7 +34,6 @@ for obj in bpy.data.objects:
         # f.write(osm_id)
     else:
         continue
-a.revertSettings()
 f.close()
 
 print('.fbx files of all %s completed.' % a._obj_Name)
