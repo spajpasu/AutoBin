@@ -46,16 +46,13 @@ class FbxFiles:
         bpy.context.scene.cursor.location = point
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
         bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
-        bpy.context.area.type = 'VIEW_3D'
-        bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
-        bpy.context.area.type = 'CONSOLE'
+        FbxFiles().snap_object()
+
 
     def move_obj_back(self, object, point):
         object.select_set(True)
         bpy.context.scene.cursor.location = point
-        bpy.context.area.type = 'VIEW_3D'
-        bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
-        bpy.context.area.type = 'CONSOLE'
+        FbxFiles().snap_object()
         FbxFiles().revertSettings()
 
     # this should return true if building
@@ -74,6 +71,11 @@ class FbxFiles:
         bpy.ops.export_scene.fbx(filepath=path, use_selection=True, use_custom_props=True,
                                  axis_forward='-Z', axis_up='Y')
         return path
+
+    def snap_object(self):
+        bpy.context.area.type = 'VIEW_3D'
+        bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
+        bpy.context.area.type = 'CONSOLE'
 
     def deselectAllObj(self):
         bpy.ops.object.select_all(action='DESELECT')
