@@ -18,7 +18,7 @@ class FbxFiles:
 
         if len(objName) > 0: FbxFiles._obj_Name = objName
 
-    def lowest_lat_long(self, object): # change this
+    def lowest_lat_long(self, object):
         if object.type == 'MESH':
             n = len(object.data.vertices.data.vertices.values())
             length = [0] * n
@@ -40,10 +40,23 @@ class FbxFiles:
         FbxFiles().deselectAllObj()
 
 
-    def change_settings(self, point):
+    def change_settings(self, object, point):
+        object.select_set(True)
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.context.scene.cursor.location = point
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+        bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
+        bpy.context.area.type = 'VIEW_3D'
+        bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
+        bpy.context.area.type = 'CONSOLE'
+
+    def move_obj_back(self, object, point):
+        object.select_set(True)
+        bpy.context.scene.cursor.location = point
+        bpy.context.area.type = 'VIEW_3D'
+        bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
+        bpy.context.area.type = 'CONSOLE'
+        FbxFiles().revertSettings()
 
     # this should return true if building
     def checkObjType(self, object):
@@ -60,7 +73,6 @@ class FbxFiles:
                                                                     # check these two
         bpy.ops.export_scene.fbx(filepath=path, use_selection=True, use_custom_props=True,
                                  axis_forward='-Z', axis_up='Y')
-        FbxFiles().revertSettings()
         return path
 
     def deselectAllObj(self):

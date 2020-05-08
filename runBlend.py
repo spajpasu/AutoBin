@@ -27,8 +27,9 @@ for obj in bpy.data.objects:
     if objectName != 0:
         point = a.lowest_lat_long(obj)
         if point != 1:
-            a.change_settings(point)
+            a.change_settings(obj, point)
             path = a.fileCreation(obj)
+            a.move_obj_back(obj, point)
             osm_id = a.get_osm_id(obj)
             f.write(str(osm_id) + '\t' + path + '\n')
         # f.write(osm_id)
