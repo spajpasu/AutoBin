@@ -1,0 +1,5 @@
+water=canal
+landuse=basin
+natural=water
+bridge=yes
+landuse=railway
