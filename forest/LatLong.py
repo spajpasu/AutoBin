@@ -1,6 +1,8 @@
 from importlib import reload
 import InputData
 import GeneralOperations as GO
+from Database import Database
+import GetCentorid
 
 reload(InputData)
 
@@ -12,12 +14,29 @@ class LatLong:
     forest_relation_ids = []
     closedWay_lat_lon = []
 
+    buildingID = []
+    buildingName = []
+    buildingCoor = []
+
+    # canal latitude longitude reader, stores the latitude and longitude location of canal in ways
+    canal_lat_lon = []
+
     def __init__(self):
         self.node_loc = GO.read_nodes()
         # print(self.node_loc)
         self.wayIDS, self.forest_way = GO.forest_from_WAYS()
         self.forest_relation_ids, self.forest_relation = GO.data_from_RELATIONS(InputData.relationForest)
         self.closedWay_lat_lon = GO.lon_lat_from_way(self.node_loc, InputData.closedWAYS)
+
+        self.buildingID, self.buildingName, self.buildingCoor = \
+            GO.building_lon_lat(self.node_loc, InputData.buidlingDATA)
+
+        # print(self.buildingCoor)
+
+        # canal latitude longitude reader
+        self.canal_lat_lon = GO.lon_lat_from_way(self.node_loc, InputData.canalData)
+        # print(self.canal_lat_lon[0])
+
                 
 # for trees from ways directly run this method, node reference contains the node reference values as input(we get directly from osm)
     def get_wayID_nodeRef(self, Id, nodeRef):
@@ -78,6 +97,18 @@ class LatLong:
         # print(relationNodes, "\n")
         self.get_wayID_nodeRef(referenceId, relationNodes)
 
+    def building_creator(self):
+        connection, cursor = Database().connectDB()
+        Database().createIndex(cursor)
+        # minVecTot = []
+        for i in range(0, len(self.buildingID)):
+            minVector = GO.getPointMinLat(self.buildingCoor[i])
+            GO.write_building_data(cursor, self.buildingID[i], self.buildingName[i], \
+                self.buildingCoor[i], minVector)
+        Database().dropIndex(cursor)
+        Database().disconnectDB(connection, cursor)
+        
+            
     def treeNode(self, wayId, lon_lat):
         length = 0
         # print(len(lon_lat[0]))
@@ -104,3 +135,33 @@ class LatLong:
         # print(len(tree_loc))
         GO.write_data(wayId, tree_loc)
 
+
+    def canal_tree_creator(self):
+        updatedLatLonTotal = []
+        preciseLatLon = []
+        for canalData in self.canal_lat_lon:
+            updatedLatLonLocal = []
+            polyObj = GO.create_Polygon(canalData)
+            centroidOth = GetCentorid.polylabel(polyObj, tolerance=0.000001)
+            for i in canalData:
+                pointLoc = GO.canal_exterior_check(centroidOth.x, i[0])
+                if pointLoc == 'r':
+                    newPoint = GO.canal_exterior_changer(i, InputData.latAlter, -InputData.lonAlter)
+                    updatedLatLonLocal.append(newPoint)
+                else:
+                    newPoint = GO.canal_exterior_changer(i, InputData.latAlter, InputData.lonAlter)
+                    updatedLatLonLocal.append(newPoint)
+            updatedLatLonTotal.append(updatedLatLonLocal)
+
+        # create trees between updated canal data
+        for i in updatedLatLonTotal:
+            preciseLatLon.append(GO.canal_tree_generator(i))
+        
+        GO.write_text_file(preciseLatLon, InputData.canalTreeData)
+        print("Points around canal created and can be accessed from {}".format(InputData.canalTreeData))
+        # print(preciseLatLon)
+
+    # def lat_Lon_Blender_Origin(self, osmID):
+    #     # print(self.node_loc)
+    #     lowestLatLon = GO.lowest_lat_lon_with_OSM(self.node_loc, InputData.buidlingDATA, osmID)
+    #     print(lowestLatLon)

@@ -12,6 +12,10 @@ class ForestDataHandler(osmium.SimpleHandler):  # here we use concept of handler
     requiredTags = GO.open_file(InputData.requiredTags)
     requiredTagArray = GO.create_tagValKey(requiredTags)
     closedWayHandler = open(InputData.closedWAYS, 'w+')
+    buildingHandler = open(InputData.buidlingDATA, 'w+')
+
+    # create trees around canal
+    canalHandler = open(InputData.canalData, 'w+')
 
 
     def __init__(self):
@@ -28,9 +32,23 @@ class ForestDataHandler(osmium.SimpleHandler):  # here we use concept of handler
                     self.closedWayHandler.write(str(w.id) + '-' + str(w.nodes) + '\n')
                     break
 
+
         if w.tags.get("landuse") == 'forest':
             if w.is_closed():
                 self.forestHandler.write(str(w.id) + '-' + str(w.nodes) + '\n')
+            else:
+                print("forest with id: {0} is not closed.".format(w.id))
+
+        if w.tags.get("building") == 'yes':
+            if w.is_closed():
+                self.buildingHandler.write(str(w.id) + '~' + str(w.tags.get("name")) + '~' + str(w.nodes) + '\n')
+            else:
+                print("building with id: {0} is not closed.".format(w.id))
+
+        # write canal data to a file
+        if w.tags.get("water") == 'canal':
+            if w.is_closed():
+                self.canalHandler.write(str(w.id) + '-' + str(w.nodes) + '\n')
             else:
                 print("forest with id: {0} is not closed.".format(w.id))
 
